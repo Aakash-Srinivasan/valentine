@@ -13,12 +13,14 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { WebView } from "react-native-webview";
-import { AntDesign } from "@expo/vector-icons";
+import { RFValue } from "react-native-responsive-fontsize";
 import LottieView from "lottie-react-native";
 import loadingAnim from "../../assets/animation/loading.json";
 import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
+import AppHeader from "@/components/AppHeader";
+import IconPill from "@/components/IconPill";
 
 export default function App() {
   const [nameOne, setNameOne] = useState("");
@@ -73,7 +75,6 @@ export default function App() {
           </style>
           </head>
       <body style="padding-left: 50px; padding-right: 50px; ;padding-top: 50px;font-family: 'times'; background-image: url('https://png.pngtree.com/thumb_back/fh260/background/20230110/pngtree-valentines-day-pink-love-background-letter-paper-border-text-qixi-festival-image_1506456.jpg'); background-size: contain; background-repeat: no-repeat;">
-      <img src="https://ikfbiqfjtmwhxacydeuj.supabase.co/storage/v1/object/public/cupid-lab-assets//stamp.png"  style="width: 100%; height: 250; margin: 0 auto; display: block;" />
         <h2 style="text-align: center;">💖 Love Agreement 💖</h2>
         <p style="text-align:center;font-size: 16rpx; ">This agreement is signed between <b>${
           nameOne || "____"
@@ -93,7 +94,7 @@ export default function App() {
             <p>_________________</p>
             <p>Signature: ${nameOne || "____"}</p>
            </div>
-             <img src="https://ikfbiqfjtmwhxacydeuj.supabase.co/storage/v1/object/public/cupid-lab-assets//loveseal.png"  style="width: 150; height: 150; margin: 0 auto; display: block;" />
+            <div style="font-size: 40px; margin: 0 24px;">💖</div>
             <div>
             <p>_________________</p>
             <p>Signature: ${nameTwo || "____"}</p>
@@ -118,7 +119,6 @@ export default function App() {
       html: generateHtmlContent(),
     });
 
-    console.log("File has been saved to:", uri);
     await shareAsync(uri, { UTI: ".pdf", mimeType: "application/pdf" });
   };
   const handleback = () => {
@@ -160,14 +160,7 @@ export default function App() {
       end={{ x: 0, y: 1 }}
       style={styles.container}
     >
-      <View style={{ width: "100%", backgroundColor: "8CC19E" }}>
-        <TouchableOpacity style={styles.backButton} onPress={handleback}>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <AntDesign name="arrowleft" size={24} color="white" />
-            <Text style={styles.backButtonText}>Love Contract</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+      <AppHeader title="Love Contract" onBack={handleback} />
 
       <ScrollView
         style={{ width: "100%" ,minHeight:'80%'}}
@@ -175,6 +168,7 @@ export default function App() {
         contentContainerStyle={{
           alignItems: "center",
           flexGrow: 1,
+          paddingTop: 80,
           paddingBottom: 50,
         }}
       >
@@ -183,12 +177,7 @@ export default function App() {
           source={require("../../assets/images/lovecontract.svg")}
         />
         <View style={styles.progressInputContainer}>
-          <Image
-            style={styles.icon}
-            source={require("../../assets/icons/ic_input.svg")}
-          />
-
-          <View style={styles.progressBarInputBackground}>
+          <IconPill icon="person-outline">
             <TextInput
               style={styles.progressInput}
               placeholder="your name"
@@ -199,18 +188,13 @@ export default function App() {
                 if (name1Error) setName1Error(""); // clear error while typing
               }}
             />
-          </View>
+          </IconPill>
         </View>
 
         {name1Error ? <Text style={styles.errorText}>{name1Error}</Text> : null}
 
         <View style={styles.progressInputContainer}>
-          <Image
-            style={styles.icon}
-            source={require("../../assets/icons/ic_input.svg")}
-          />
-
-          <View style={styles.progressBarInputBackground}>
+          <IconPill icon="person-outline">
             <TextInput
               style={styles.progressInput}
               placeholder="Your Crush Name"
@@ -221,21 +205,14 @@ export default function App() {
                 if (name2Error) setName2Error(""); // clear error while typing
               }}
             />
-          </View>
+          </IconPill>
         </View>
 
         {name2Error ? <Text style={styles.errorText}>{name2Error}</Text> : null}
-        <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-          <View style={styles.progressContainer}>
-            <Image
-              style={styles.icon}
-              source={require("../../assets/icons/ic_input.svg")}
-            />
-
-            <View style={styles.progressBarBackground}>
-              <Text style={styles.percentageText}>{`${date}`}</Text>
-            </View>
-          </View>
+        <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.progressContainer}>
+          <IconPill icon="calendar-outline">
+            <Text style={styles.percentageText}>{`${date}`}</Text>
+          </IconPill>
         </TouchableOpacity>
 
         {showDatePicker && (
@@ -333,26 +310,13 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     color: "#000",
-    paddingLeft: 30,
-    fontSize: 16,
+    fontSize: RFValue(16),
     fontWeight: "600",
   },
   percentageText: {
-    fontSize: 18,
+    fontSize: RFValue(18),
     fontWeight: "bold",
     color: "#000",
-    paddingLeft: 30,
-    marginTop: 4,
-  },
-  progressBarBackground: {
-    width: "80%",
-    height: 40,
-    backgroundColor: "#fff",
-    borderRadius: 30,
-    overflow: "hidden",
-    marginVertical: 20,
-    borderWidth: 3,
-    borderColor: "#F16886",
   },
   askButton: {
     width: 300,
@@ -365,41 +329,22 @@ const styles = StyleSheet.create({
   },
   ButtonText: {
     color: "#fff",
-    fontSize: 18,
+    fontSize: RFValue(18),
     fontWeight: "bold",
   },
   progressContainer: {
-    flexDirection: "row",
-    alignItems: "center",
     width: "80%",
+    marginTop: 10,
   },
   progressInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
     marginTop: 10,
     paddingHorizontal: 16,
     width: "100%",
   },
-  icon: {
-    width: 50,
-    height: 50,
-    resizeMode: "contain",
-    marginRight: -30, // space between icon and bar
-    zIndex: 2,
-  },
-  progressBarInputBackground: {
-    flex: 1,
-    height: 50,
-    borderRadius: 20,
-    backgroundColor: "#fff",
-    justifyContent: "center",
-    borderWidth: 3,
-    borderColor: "#F16886",
-  },
   errorText: {
     color: "red",
     fontFamily: "k2dLight",
-    fontSize: 12,
+    fontSize: RFValue(12),
     lineHeight:12,
   },
 
@@ -421,7 +366,7 @@ const styles = StyleSheet.create({
   },
   switchLabel: {
     marginLeft: 12,
-    fontSize: 16,
+    fontSize: RFValue(16),
     fontFamily: "k2dMedium",
     color: "#444",
   },
@@ -439,17 +384,6 @@ const styles = StyleSheet.create({
   generateButtonText: {
     color: "#d63384",
     fontFamily:'k2dBold',
-    fontSize: 16,
-  },
-  backButton: {
-    marginTop: 20,
-    marginBottom: 10,
-  },
-  backButtonText: {
-    marginLeft: 10,
-    color: "#fff",
-    fontFamily: "k2dMedium",
-    fontSize: 20,
-    textAlign: "center",
+    fontSize: RFValue(16),
   },
 });

@@ -7,12 +7,14 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
+import { RFValue } from "react-native-responsive-fontsize";
 import axios from "axios";
 import * as Speech from "expo-speech";
 import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
+import AppHeader from "@/components/AppHeader";
 
 const SmileGiver = () => {
   const [setup, setSetup] = useState("");
@@ -41,7 +43,6 @@ const SmileGiver = () => {
         setSetup("Could not fetch a joke at the moment.");
       }
     } catch (error) {
-      console.error("Error fetching joke:", error);
       setSetup("Oops! Something went wrong.");
     } finally {
       setLoading(false);
@@ -85,7 +86,8 @@ const SmileGiver = () => {
       end={{ x: 0, y: 1 }}
       style={styles.container}
     >
-      <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center',gap:20}}>
+      <AppHeader title="LoveGiggles" onBack={handleback} />
+      <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center',gap:20,marginTop:70}}>
         <TouchableOpacity onPress={getJoke}>
         <LinearGradient
           colors={["#F16886", "#FFCFBA"]}
@@ -129,7 +131,7 @@ const SmileGiver = () => {
         <View style={styles.chatContainer}>
           {setup ? (
             <View style={styles.messageRowLeft}>
-              <Text style={styles.avatar}>👤</Text>
+              <Ionicons name="person-circle" size={28} color="#7f8c8d" style={styles.avatar} />
               <View style={styles.messageBubbleLeft}>
                 <Text style={styles.messageText}>{setup}</Text>
               </View>
@@ -140,7 +142,7 @@ const SmileGiver = () => {
               <View style={styles.messageBubbleRight}>
                 <Text style={styles.messageText}>{delivery}</Text>
               </View>
-              <Text style={styles.avatar}>😄</Text>
+              <Ionicons name="happy" size={28} color="#e67e22" style={styles.avatar} />
             </View>
           ) : null}
         </View>
@@ -158,26 +160,20 @@ const SmileGiver = () => {
         style={styles.image}
         source={require("../../assets/images/joke.svg")}
       />
-      <TouchableOpacity style={styles.backButton} onPress={handleback}>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <AntDesign name="arrowleft" size={24} color="white" />
-          <Text style={styles.backButtonText}>LoveGiggles</Text>
-        </View>
-      </TouchableOpacity>
     </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   speakerLabel: {
-    fontSize: 14,
+    fontSize: RFValue(14),
     color: "#3498db",
     marginTop: 6,
     textAlign: "center",
   },
   laughText: {
     marginTop: 20,
-    fontSize: 20,
+    fontSize: RFValue(20),
     fontWeight: "600",
     color: "#e67e22", // Fun orange
     textAlign: "center",
@@ -190,19 +186,6 @@ const styles = StyleSheet.create({
     width: 300,
     height: 210,
     marginRight: 8,
-  },
- 
-  backButton: {
-    position: "absolute",
-    top: 30,
-    left: 20,
-  },
-  backButtonText: {
-    marginLeft: 10,
-    color: "#fff",
-    fontFamily: "k2dMedium",
-    fontSize: 20,
-    textAlign: "center",
   },
   speakerButton: {
     backgroundColor: "#ffffff",
@@ -232,7 +215,7 @@ const styles = StyleSheet.create({
   },
   askButtonText: {
     color: "#fff",
-    fontSize: 18,
+    fontSize: RFValue(18),
     fontWeight: "bold",
   },
   chatContainer: {
@@ -251,7 +234,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   avatar: {
-    fontSize: 24,
     marginHorizontal: 8,
     marginTop: 4,
   },
@@ -271,7 +253,7 @@ const styles = StyleSheet.create({
   },
   messageText: {
     fontFamily:'k2dMedium',
-    fontSize: 16,
+    fontSize: RFValue(16),
     color: "#2C3E50",
   },
   speakerIcon: {
@@ -279,7 +261,7 @@ const styles = StyleSheet.create({
   },
   placeholderText: {
     marginTop: 40,
-    fontSize: 16,
+    fontSize: RFValue(16),
     color: "#7f8c8d",
     fontFamily:'k2dMedium',
     textAlign: "center",

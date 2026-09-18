@@ -9,6 +9,9 @@ import {
 import LottieView from "lottie-react-native";
 import axios from "axios";
 import { useRouter } from "expo-router";
+import { RFValue } from "react-native-responsive-fontsize";
+import { LinearGradient } from "expo-linear-gradient";
+import AppHeader from "@/components/AppHeader";
 
 const AgePredictionScreen: React.FC = () => {
   const [name, setName] = useState<string>("");
@@ -44,7 +47,13 @@ const AgePredictionScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={["#F6D365", "#FDA085"]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.container}
+    >
+      <AppHeader title="Age Predictor" onBack={() => router.back()} />
       <Text style={styles.title}>🔮 Predict Your Age & Gender 🔮</Text>
 
       <TextInput
@@ -82,36 +91,23 @@ const AgePredictionScreen: React.FC = () => {
       )}
 
       {error && <Text style={styles.error}>{error}</Text>}
-
-      <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-        <Text style={styles.backButtonText}>🔙 Back</Text>
-      </TouchableOpacity>
-    </View>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  backButton: {
-    position: "absolute",
-    top: 50,
-    left: 20,
-  },
-  backButtonText: {
-    fontSize: 16,
-    color: "#555",
-  },
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#f8f9fa",
+    paddingTop: 100,
   },
   title: {
-    fontSize: 28,
+    fontSize: RFValue(24),
     fontWeight: "bold",
     marginBottom: 20,
-    color: "#FF7755",
+    color: "#fff",
     textAlign: "center",
   },
   input: {
@@ -121,19 +117,19 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 10,
-    fontSize: 16,
+    fontSize: RFValue(16),
     backgroundColor: "#fff",
   },
   button: {
-    backgroundColor: "#FF7755",
+    backgroundColor: "#fff",
     padding: 15,
     borderRadius: 10,
     alignItems: "center",
     width: "100%",
   },
   buttonText: {
-    color: "#fff",
-    fontSize: 18,
+    color: "#FF7755",
+    fontSize: RFValue(18),
     fontWeight: "bold",
   },
   lottie: {
@@ -144,9 +140,18 @@ const styles = StyleSheet.create({
   resultContainer: {
     marginTop: 20,
     alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 20,
+    width: "100%",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
   },
   result: {
-    fontSize: 18,
+    fontSize: RFValue(16),
     marginTop: 10,
     fontWeight: "bold",
     color: "#28a745",
@@ -157,10 +162,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   error: {
-    fontSize: 16,
+    fontSize: RFValue(16),
     marginTop: 20,
-    color: "red",
+    color: "#fff",
     textAlign: "center",
+    fontWeight: "600",
   },
 });
 

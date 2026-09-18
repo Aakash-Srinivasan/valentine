@@ -1,19 +1,23 @@
 import React, { useRef, useState } from "react";
 import {
-  View,
   Text,
   StyleSheet,
   Animated,
   TouchableOpacity,
   Image,
 } from "react-native";
+import { useRouter } from "expo-router";
+import { RFValue } from "react-native-responsive-fontsize";
+import { LinearGradient } from "expo-linear-gradient";
+import AppHeader from "@/components/AppHeader";
 
 const CoinTossScreen: React.FC = () => {
   const [result, setResult] = useState<"Heads" | "Tails" | null>(null);
   const [isFlipping, setIsFlipping] = useState(false);
   const spinValue = useRef(new Animated.Value(0)).current;
   const moveValue = useRef(new Animated.Value(0)).current;
-  
+  const router = useRouter();
+
   const rotateInterpolate = spinValue.interpolate({
     inputRange: [0, 360],
     outputRange: ["0deg", "360deg"],
@@ -59,7 +63,13 @@ const CoinTossScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={["#89F7FE", "#66A6FF"]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.container}
+    >
+      <AppHeader title="Coin Toss" onBack={() => router.back()} />
       <Text style={styles.title}>🪙 Toss the Coin</Text>
 
       <Animated.View
@@ -94,24 +104,25 @@ const CoinTossScreen: React.FC = () => {
       </TouchableOpacity>
 
       {result && !isFlipping && (
-        <Text style={styles.resultText}>🎉 It's {result}!</Text>
+        <Text style={styles.resultText}>🎉 It&apos;s {result}!</Text>
       )}
-    </View>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF",
     alignItems: "center",
     justifyContent: "center",
     padding: 24,
+    paddingTop: 100,
   },
   title: {
-    fontSize: 28,
+    fontSize: RFValue(28),
     fontWeight: "700",
-    marginBottom: 30,
+    marginBottom: 10,
+    color: "#fff",
   },
   coin: {
     width: 200,
@@ -126,21 +137,21 @@ const styles = StyleSheet.create({
     borderRadius: 90,
   },
   button: {
-    backgroundColor: "#7E8EFF",
+    backgroundColor: "#fff",
     paddingVertical: 14,
     paddingHorizontal: 36,
     borderRadius: 40,
   },
   buttonText: {
-    color: "#FFF",
-    fontSize: 18,
-    fontWeight: "600",
+    color: "#3E6FE0",
+    fontSize: RFValue(18),
+    fontWeight: "700",
   },
   resultText: {
-    fontSize: 22,
+    fontSize: RFValue(22),
     fontWeight: "bold",
     marginTop: 20,
-    color: "#0BFDA6",
+    color: "#fff",
   },
 });
 

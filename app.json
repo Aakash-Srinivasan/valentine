@@ -1,20 +1,19 @@
 {
   "expo": {
-    "name": "Cupid's Lab",
+    "name": "LoveLab",
     "slug": "MyappOne",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icons/web-app-manifest-512x512.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icons/cup_logo.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#F16886"
       },
       "package": "com.portfolio.appOne"
     },

@@ -11,9 +11,11 @@ import { useFocusEffect, useRouter } from "expo-router";
 import axios from "axios";
 import * as Clipboard from "expo-clipboard";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { AntDesign, Feather } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
+import { RFValue } from "react-native-responsive-fontsize";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
+import AppHeader from "@/components/AppHeader";
 
 const PickupLineScreen = () => {
   const [pickupLine, setPickupLine] = useState("");
@@ -34,7 +36,7 @@ const PickupLineScreen = () => {
       const favorites = stored ? JSON.parse(stored) : [];
       setFavorites(favorites);
     } catch (error) {
-      console.error("Failed to load favorites", error);
+      // Ignore malformed/missing favorites in storage
     }
   };
   const fetchPickupLine = async () => {
@@ -47,7 +49,7 @@ const PickupLineScreen = () => {
         "https://rizzapi.vercel.app/random/text"
       );
       const data = response.data;
-      setPickupLine(data || "No pickup line found 😅");
+      setPickupLine(data || "No pickup line found");
 
       // Animate pickup line appearance
       Animated.timing(fadeAnim, {
@@ -83,7 +85,7 @@ const PickupLineScreen = () => {
         );
       }
     } catch (error) {
-      console.error("Error saving favorite:", error);
+      // Ignore storage write failures
     }
   };
 
@@ -102,26 +104,21 @@ const PickupLineScreen = () => {
       end={{ x: 0, y: 1 }}
       style={styles.container}
     >
-      <TouchableOpacity style={styles.backButton} onPress={handleback}>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <AntDesign name="arrowleft" size={24} color="white" />
-          <Text style={styles.backButtonText}>Love Line</Text>
-        </View>
-      </TouchableOpacity>
-      {favorites.length > 0 || save ? (
-        <TouchableOpacity
-          style={styles.rightbackButton}
-          onPress={() => router.push("/Favourites")}
-        >
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Image
-              source={require("../../assets/icons/ic_heart.svg")}
-              style={styles.loveIcon}
-            />
-            <Text style={styles.rightbackButtonText}>Show Favouries</Text>
-          </View>
-        </TouchableOpacity>
-      ) : null}
+      <AppHeader
+        title="Love Line"
+        onBack={handleback}
+        right={
+          favorites.length > 0 || save ? (
+            <TouchableOpacity
+              style={styles.rightBackButton}
+              onPress={() => router.push("/Favourites")}
+            >
+              <Ionicons name="heart" size={18} color="#fff" />
+              <Text style={styles.rightbackButtonText}>Favourites</Text>
+            </TouchableOpacity>
+          ) : undefined
+        }
+      />
 
       {loading ? (
         <LottieView
@@ -155,7 +152,12 @@ const PickupLineScreen = () => {
               </TouchableOpacity>
             </View>
 
-            {copied && <Text style={styles.copied}>Copied ✅</Text>}
+            {copied && (
+              <View style={styles.copiedRow}>
+                <Ionicons name="checkmark-circle" size={18} color="#0BFDA6" />
+                <Text style={styles.copied}>Copied</Text>
+              </View>
+            )}
           </Animated.View>
         )
       )}
@@ -170,10 +172,7 @@ const PickupLineScreen = () => {
         </LinearGradient>
       </TouchableOpacity>
 
-      <Image
-        style={styles.bottomImage}
-        source={require("../../assets/images/pickline.svg")}
-      />
+      <Image style={styles.bottomImage} source={require("../../assets/images/pickline.svg")} />
     </LinearGradient>
   );
 };
@@ -187,11 +186,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 20,
-  },
-  loveIcon: {
-    width: 24,
-    height: 24,
-    resizeMode: "contain",
   },
   bottomImage: {
     width: 250,
@@ -214,7 +208,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   pickupText: {
-    fontSize: 20,
+    fontSize: RFValue(20),
     fontStyle: "italic",
     color: "#444",
     textAlign: "center",
@@ -234,9 +228,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     gap: 5,
   },
-  copied: {
+  copiedRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
     marginTop: 10,
-    fontSize: 14,
+  },
+  copied: {
+    fontSize: RFValue(14),
     color: "#0BFDA6",
     fontWeight: "600",
   },
@@ -251,32 +250,18 @@ const styles = StyleSheet.create({
   },
   ButtonText: {
     color: "#fff",
-    fontSize: 18,
+    fontSize: RFValue(18),
     fontWeight: "bold",
   },
+  rightBackButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
   rightbackButtonText: {
-    marginLeft: 10,
     color: "#fff",
     fontFamily: "k2dMedium",
-    fontSize: 16,
-    textAlign: "center",
-  },
-  backButton: {
-    position: "absolute",
-    top: 30,
-    left: 20,
-  },
-  rightbackButton: {
-    position: "absolute",
-    top: 30,
-    right: 20,
-    marginTop: 10,
-  },
-  backButtonText: {
-    marginLeft: 10,
-    color: "#fff",
-    fontFamily: "k2dMedium",
-    fontSize: 20,
+    fontSize: RFValue(14),
     textAlign: "center",
   },
 });

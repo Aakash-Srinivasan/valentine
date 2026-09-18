@@ -8,9 +8,12 @@ import {
 } from "react-native";
 import LottieView from "lottie-react-native";
 import { router } from "expo-router";
-import { AntDesign } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
+import { RFValue } from "react-native-responsive-fontsize";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
+import AppHeader from "@/components/AppHeader";
+import IconPill from "@/components/IconPill";
 
 const animationSources: Record<string, any> = {
   love: require("@/assets/animation/love.json"),
@@ -141,28 +144,15 @@ const CombinedFlamesScreen = () => {
       end={{ x: 0, y: 1 }}
       style={styles.container}
     >
-      <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <AntDesign name="arrowleft" size={24} color="white" />
-          <Text style={styles.backButtonText}>FLAMES</Text>
-        </View>
-      </TouchableOpacity>
+      <AppHeader title="FLAMES" onBack={handleBack} />
       {!showResult && (
-        <Image
-          style={styles.bottomImage}
-          source={require("../../assets/images/flames.svg")}
-        />
+        <Image style={styles.bottomImage} source={require("../../assets/images/flames.svg")} />
       )}
 
       {!showResult ? (
         <View style={{ width: "100%", alignItems: "center" }}>
           <View style={styles.progressInputContainer}>
-            <Image
-              style={styles.icon}
-              source={require("../../assets/icons/ic_input.svg")}
-            />
-
-            <View style={styles.progressBarInputBackground}>
+            <IconPill icon="person-outline">
               <TextInput
                 style={styles.progressInput}
                 placeholder="Your Name"
@@ -173,23 +163,15 @@ const CombinedFlamesScreen = () => {
                   if (name1Error) setName1Error(""); // clear error while typing
                 }}
               />
-            </View>
+            </IconPill>
           </View>
 
           {name1Error ? (
             <Text style={styles.errorText}>{name1Error}</Text>
           ) : null}
-          <Image
-            source={require("../../assets/icons/ic_heart.svg")} // your custom SVG
-            style={styles.loveIcon}
-          />
+          <Ionicons name="heart" size={28} color="#FF6B81" style={styles.loveIcon} />
           <View style={styles.progressInputContainer}>
-            <Image
-              style={styles.icon}
-              source={require("../../assets/icons/ic_input.svg")}
-            />
-
-            <View style={styles.progressBarInputBackground}>
+            <IconPill icon="person-outline">
               <TextInput
                 style={styles.progressInput}
                 placeholder="Your Crush Name"
@@ -197,10 +179,10 @@ const CombinedFlamesScreen = () => {
                 value={name2}
                 onChangeText={(text) => {
                   setName2(text);
-                  if (name1Error) setName2Error(""); // clear error while typing
+                  if (name2Error) setName2Error(""); // clear error while typing
                 }}
               />
-            </View>
+            </IconPill>
           </View>
           {name2Error ? (
             <Text style={styles.errorText}>{name2Error}</Text>
@@ -221,10 +203,7 @@ const CombinedFlamesScreen = () => {
           <View style={styles.namesWrapper}>
             <Text style={styles.namesText}>{name1}</Text>
 
-            <Image
-              source={require("../../assets/icons/ic_heart.svg")} // your custom SVG
-              style={styles.loveIcon}
-            />
+            <Ionicons name="heart" size={28} color="#FF6B81" style={styles.loveIcon} />
 
             <Text style={styles.namesText}>{name2}</Text>
           </View>
@@ -232,9 +211,11 @@ const CombinedFlamesScreen = () => {
           <View style={styles.flamesRow}>
             {flames.map((char, idx) => (
               <View key={idx} style={styles.letterBox}>
-                <Text style={styles.letterText}>
-                  {eliminatedIndexes.includes(idx) ? "❌" : char}
-                </Text>
+                {eliminatedIndexes.includes(idx) ? (
+                  <Ionicons name="close" size={RFValue(17)} color="#D64545" />
+                ) : (
+                  <Text style={styles.letterText}>{char}</Text>
+                )}
               </View>
             ))}
           </View>
@@ -285,57 +266,37 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     backgroundColor: "#fff",
   },
-  icon: {
-    width: 50,
-    height: 50,
-    resizeMode: "contain",
-    marginRight: -30, // space between icon and bar
-    zIndex: 2,
-  },
-  progressInput: {
-    width: "100%",
-    height: "100%",
-    color: "#000",
-    paddingLeft: 30,
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  progressInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 20,
-    paddingHorizontal: 16,
-    width: "100%",
-  },
-  loveIcon: {
-    width: 32,
-    height: 32,
-    resizeMode: "contain",
-  },
-  progressBarInputBackground: {
-    flex: 1,
-    height: 50,
-    borderRadius: 20,
-    backgroundColor: "#fff",
-    justifyContent: "center",
-    borderWidth: 3,
-    borderColor: "#F16886",
-  },
-  namesWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    marginVertical: 12,
-  },
   bottomImage: {
     width: 250,
     height: 200,
     alignSelf: "center",
     marginTop: 20,
   },
+  progressInput: {
+    width: "100%",
+    height: "100%",
+    color: "#000",
+    fontSize: RFValue(16),
+    fontWeight: "600",
+  },
+  progressInputContainer: {
+    marginVertical: 20,
+    paddingHorizontal: 16,
+    width: "100%",
+  },
+  loveIcon: {
+    marginVertical: 4,
+  },
+  namesWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 12,
+    gap: 6,
+  },
 
   namesText: {
-    fontSize: 20,
+    fontSize: RFValue(20),
     fontFamily: "k2dBold",
     fontWeight: "600",
     color: "white",
@@ -344,8 +305,8 @@ const styles = StyleSheet.create({
   errorText: {
     color: "red",
     fontFamily: "k2dLight",
-    fontSize: 12,
-    lineHeight:12,
+    fontSize: RFValue(12),
+    lineHeight: 12,
   },
   input: {
     borderWidth: 1,
@@ -353,7 +314,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 15,
     marginVertical: 10,
-    fontSize: 18,
+    fontSize: RFValue(18),
   },
   askButton: {
     width: 248,
@@ -366,27 +327,14 @@ const styles = StyleSheet.create({
   },
   ButtonText: {
     color: "#fff",
-    fontSize: 18,
+    fontSize: RFValue(18),
     fontWeight: "bold",
   },
   disabledButton: {
     backgroundColor: "#ccc",
   },
-
-  backButton: {
-    position: "absolute",
-    top: 30,
-    left: 20,
-  },
-  backButtonText: {
-    marginLeft: 10,
-    color: "#fff",
-    fontFamily: "k2dMedium",
-    fontSize: 20,
-    textAlign: "center",
-  },
   names: {
-    fontSize: 20,
+    fontSize: RFValue(20),
     marginBottom: 30,
     textAlign: "center",
   },
@@ -404,13 +352,14 @@ const styles = StyleSheet.create({
     padding: 10,
     width: 45,
     alignItems: "center",
+    justifyContent: "center",
   },
   letterText: {
-    fontSize: 17,
+    fontSize: RFValue(17),
     fontFamily: "K2dBold",
   },
   resultText: {
-    fontSize: 22,
+    fontSize: RFValue(22),
     fontFamily: "k2dBold",
     textAlign: "center",
     marginVertical: 20,
