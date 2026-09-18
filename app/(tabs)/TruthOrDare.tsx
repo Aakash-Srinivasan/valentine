@@ -7,13 +7,15 @@ import {
   TextInput,
   Animated,
   Easing,
-  Dimensions,
   Modal,
 } from "react-native";
-
-const { width } = Dimensions.get("window");
+import { useRouter } from "expo-router";
+import { RFValue } from "react-native-responsive-fontsize";
+import { LinearGradient } from "expo-linear-gradient";
+import AppHeader from "@/components/AppHeader";
 
 const TruthOrDareGame = () => {
+  const router = useRouter();
   const [numPlayers, setNumPlayers] = useState("");
   const [players, setPlayers] = useState<number[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState<number | null>(null);
@@ -70,12 +72,13 @@ const TruthOrDareGame = () => {
   });
 
   const renderPlayers = () => {
-    const radius = 120;
+    const radius = 118;
 
     return players.map((num, index) => {
       const angle = (2 * Math.PI * index) / players.length;
       const x = radius * Math.cos(angle);
       const y = radius * Math.sin(angle);
+      const isSelected = num === selectedPlayer;
 
       return (
         <View
@@ -85,18 +88,25 @@ const TruthOrDareGame = () => {
             {
               top: y + radius + 30,
               left: x + radius + 30,
-              backgroundColor: num === selectedPlayer ? "#FF4E4E" : "#0BFDA6",
+              backgroundColor: isSelected ? "#FF4E6E" : "#fff",
             },
+            isSelected && styles.playerCircleSelected,
           ]}
         >
-          <Text style={styles.playerText}>{num}</Text>
+          <Text style={[styles.playerText, isSelected && styles.playerTextSelected]}>{num}</Text>
         </View>
       );
     });
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={["#667EEA", "#764BA2"]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.container}
+    >
+      <AppHeader title="Truth or Dare" onBack={() => router.back()} />
       {players.length === 0 ? (
         <>
           <Text style={styles.title}>Enter number of players:</Text>
@@ -106,6 +116,7 @@ const TruthOrDareGame = () => {
             value={numPlayers}
             onChangeText={setNumPlayers}
             placeholder="e.g. 4"
+            placeholderTextColor="#999"
           />
           <TouchableOpacity style={styles.startButton} onPress={handleStart}>
             <Text style={styles.buttonText}>Start</Text>
@@ -114,7 +125,9 @@ const TruthOrDareGame = () => {
       ) : (
         <>
           <View style={styles.circleContainer}>
+            <View style={styles.wheelRing} />
             {renderPlayers()}
+            <View style={styles.hub} />
             <Animated.View
               style={[
                 styles.arrow,
@@ -123,6 +136,7 @@ const TruthOrDareGame = () => {
                 },
               ]}
             >
+              <View style={styles.arrowShaft} />
               <View style={styles.arrowTip} />
             </Animated.View>
           </View>
@@ -147,7 +161,7 @@ const TruthOrDareGame = () => {
           </View>
         </View>
       </Modal>
-    </View>
+    </LinearGradient>
   );
 };
 
@@ -156,42 +170,44 @@ export default TruthOrDareGame;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFECEC",
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
+    paddingTop: 100,
   },
   title: {
-    fontSize: 24,
+    fontSize: RFValue(24),
     marginBottom: 20,
     fontWeight: "bold",
-    color: "#444",
+    color: "#fff",
   },
   input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
+    borderWidth: 0,
     width: "80%",
     borderRadius: 10,
     padding: 12,
     textAlign: "center",
-    fontSize: 18,
+    fontSize: RFValue(18),
     backgroundColor: "#fff",
     marginBottom: 20,
   },
   startButton: {
-    backgroundColor: "#7E8EFF",
-    padding: 15,
+    backgroundColor: "#fff",
+    paddingVertical: 15,
+    paddingHorizontal: 30,
     borderRadius: 12,
   },
   spinButton: {
-    backgroundColor: "#FF7755",
-    padding: 15,
+    backgroundColor: "#fff",
+    paddingVertical: 15,
+    paddingHorizontal: 30,
     borderRadius: 12,
     marginTop: 30,
   },
   buttonText: {
-    color: "#fff",
-    fontSize: 18,
+    color: "#667EEA",
+    fontSize: RFValue(18),
+    fontWeight: "700",
   },
   circleContainer: {
     width: 300,
@@ -202,42 +218,77 @@ const styles = StyleSheet.create({
     position: "relative",
     marginTop: 20,
   },
-  arrow: {
-    width: 10,
-    height: 140,
-    backgroundColor: "#444",
+  wheelRing: {
     position: "absolute",
-    top: 10,
+    width: 300,
+    height: 300,
+    borderRadius: 150,
+    backgroundColor: "rgba(255, 255, 255, 0.12)",
+    borderWidth: 3,
+    borderColor: "rgba(255, 255, 255, 0.4)",
+  },
+  hub: {
+    position: "absolute",
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: "#fff",
+    zIndex: 11,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  arrow: {
+    width: 12,
+    height: 130,
+    position: "absolute",
+    top: 16,
     zIndex: 10,
-    justifyContent: "flex-start",
     alignItems: "center",
-    borderRadius: 5,
+  },
+  arrowShaft: {
+    width: 8,
+    height: 100,
+    backgroundColor: "#FFD166",
+    borderRadius: 4,
   },
   arrowTip: {
     width: 0,
     height: 0,
     backgroundColor: "transparent",
     borderStyle: "solid",
-    borderTopWidth: 20,
-    borderTopColor: "#0BFDA6",
-    borderLeftWidth: 10,
+    borderTopWidth: 22,
+    borderTopColor: "#FF4E6E",
+    borderLeftWidth: 11,
     borderLeftColor: "transparent",
-    borderRightWidth: 10,
+    borderRightWidth: 11,
     borderRightColor: "transparent",
-    marginTop: -10,
   },
   playerCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     position: "absolute",
     justifyContent: "center",
     alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
+  },
+  playerCircleSelected: {
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
   },
   playerText: {
-    color: "#fff",
+    color: "#667EEA",
     fontWeight: "bold",
-    fontSize: 16,
+    fontSize: RFValue(16),
+  },
+  playerTextSelected: {
+    color: "#fff",
   },
   popupOverlay: {
     flex: 1,
@@ -253,7 +304,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   popupText: {
-    fontSize: 18,
+    fontSize: RFValue(18),
     marginBottom: 20,
     fontWeight: "600",
   },
@@ -265,6 +316,6 @@ const styles = StyleSheet.create({
   },
   popupButtonText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: RFValue(16),
   },
 });

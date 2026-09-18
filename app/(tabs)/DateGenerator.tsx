@@ -7,13 +7,15 @@ import {
   StyleSheet,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { supabase } from "../../supabaseClient";
+import { dateIdeas, DateMood } from "../../assets/data/dateIdeas";
 import { useRouter } from "expo-router";
-import { AntDesign } from "@expo/vector-icons";
+import { RFValue } from "react-native-responsive-fontsize";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
 import loadingAnim from "../../assets/animation/loading.json";
 import LottieView from "lottie-react-native";
+import AppHeader from "@/components/AppHeader";
+import IconPill from "@/components/IconPill";
 
 export default function DateGenerator() {
   const [date, setDate] = useState(new Date());
@@ -21,38 +23,27 @@ export default function DateGenerator() {
   const [mood, setMood] = useState("romantic");
   const [idea, setIdea] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false); 
+  const [isGenerating, setIsGenerating] = useState(false);
   const router = useRouter();
   const moods = ["romantic", "chaotic", "funny"];
   const fetchIdea = async () => {
     if (!mood) return;
 
+    const ideas = dateIdeas[mood as DateMood];
+    if (!ideas || ideas.length === 0) {
+      setIdea("No ideas found for this mood.");
+      setIsGenerating(true);
+      return;
+    }
+
     setLoading(true); // Start loading spinner
 
-    const { count } = await supabase
-      .from("date_ideas")
-      .select("idea", { count: "exact" })
-      .eq("mood", mood);
+    // Ideas are local now, so this resolves instantly - the short delay just
+    // keeps the loading animation from flashing on and off too abruptly.
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
-    if (count) {
-      const randomOffset = Math.floor(Math.random() * count); // Random offset
-
-      const { data, error } = await supabase
-        .from("date_ideas")
-        .select("idea")
-        .eq("mood", mood)
-        .range(randomOffset, randomOffset) // Fetch one random idea by using range
-        .limit(1);
-
-      if (error) {
-        console.error("Error fetching idea:", error);
-        setIdea("Something went wrong!");
-      } else if (data && data.length > 0) {
-        setIdea(data[0].idea); // Update with new idea
-      } else {
-        setIdea("No ideas found for this mood.");
-      }
-    }
+    const randomIndex = Math.floor(Math.random() * ideas.length);
+    setIdea(ideas[randomIndex]);
 
     setLoading(false); // End loading spinner
     setIsGenerating(true); // Set generating to true to show Try Again button
@@ -84,32 +75,15 @@ export default function DateGenerator() {
       end={{ x: 0, y: 1 }}
       style={styles.container}
     >
-      <TouchableOpacity style={styles.backButton} onPress={handleback}>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <AntDesign name="arrowleft" size={24} color="white" />
-          <Text style={styles.backButtonText}>Love Calc</Text>
-        </View>
-      </TouchableOpacity>
+      <AppHeader title="Date Ideas" onBack={handleback} />
         <View style={{ justifyContent: "center", alignItems: "center" }}>
- <Image
-        style={styles.bottomImage}
-        source={require("../../assets/images/dateidea.svg")}
-      />
+ <Image style={styles.bottomImage} source={require("../../assets/images/dateidea.svg")} />
 
 
-      <TouchableOpacity onPress={() => setShowPicker(true)}>
-        <View style={styles.progressContainer}>
-          <Image
-            style={styles.icon}
-            source={require("../../assets/icons/ic_input.svg")}
-          />
-
-          <View style={styles.progressBarBackground}>
-            <Text
-              style={styles.percentageText}
-            >{`${date.toLocaleDateString()}`}</Text>
-          </View>
-        </View>
+      <TouchableOpacity onPress={() => setShowPicker(true)} style={styles.progressContainer}>
+        <IconPill icon="calendar-outline">
+          <Text style={styles.percentageText}>{`${date.toLocaleDateString()}`}</Text>
+        </IconPill>
       </TouchableOpacity>
 
       {showPicker && (
@@ -196,14 +170,12 @@ const styles = StyleSheet.create({
     height: 200,
     alignSelf: "center",
     marginTop: 20,
-    borderRadius:30,
+    borderRadius: 30,
   },
   percentageText: {
-    fontSize: 18,
+    fontSize: RFValue(18),
     fontWeight: "bold",
     color: "#000",
-    paddingLeft: 30,
-    marginTop: 4,
   },
   askButton: {
     width: 248,
@@ -216,54 +188,13 @@ const styles = StyleSheet.create({
   },
   ButtonText: {
     color: "#fff",
-    fontSize: 18,
+    fontSize: RFValue(18),
     fontWeight: "bold",
   },
   progressContainer: {
-    flexDirection: "row",
-    alignItems: "center",
     width: "80%",
     marginVertical: 20,
   },
-  icon: {
-    width: 50,
-    height: 50,
-    resizeMode: "contain",
-    marginRight: -30, // space between icon and bar
-    zIndex: 2,
-  },
-  progressBarBackground: {
-    width: "80%",
-    height: 40,
-    backgroundColor: "#fff",
-    borderRadius: 30,
-    overflow: "hidden",
-    marginVertical: 20,
-    borderWidth: 3,
-    borderColor: "#F16886",
-  },
-  percentageBadgeWrapper: {
-    position: "relative",
-    width: 100,
-    height: 100,
-    justifyContent: "center",
-    alignItems: "center",
-    marginVertical: 10,
-  },
-
-  percentageBadgeImage: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "contain",
-  },
-
-  percentageInBadge: {
-    position: "absolute",
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "#fff",
-  },
-
   input: {
     borderWidth: 1,
     borderColor: "#ddd",
@@ -312,7 +243,7 @@ const styles = StyleSheet.create({
   },
   moodText: {
     fontFamily:'k2dLight',
-    fontSize: 14,
+    fontSize: RFValue(14),
     color: "#fff",
   },
   selectedMoodText: {
@@ -328,7 +259,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#E0E0E0", // Disabled button color
   },
   generateButtonText: {
-    fontSize: 16,
+    fontSize: RFValue(16),
     color: "#fff",
     textAlign: "center",
     fontWeight: "600",
@@ -340,7 +271,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   tryAgainText: {
-    fontSize: 16,
+    fontSize: RFValue(16),
     color: "#fff",
     textAlign: "center",
     fontWeight: "600",
@@ -361,27 +292,15 @@ const styles = StyleSheet.create({
 
   },
   ideaHeader: {
-    fontSize: 18,
+    fontSize: RFValue(18),
     fontWeight: "700",
     textAlign: "center",
     marginBottom: 10,
   },
   ideaText: {
-    fontSize: 16,
+    fontSize: RFValue(16),
     fontFamily:'k2dMedium',
     textAlign: "center",
     color: "#333",
-  },
-  backButton: {
-    position: "absolute",
-    top: 30,
-    left: 20,
-  },
-  backButtonText: {
-    marginLeft: 10,
-    color: "#fff",
-    fontFamily: "k2dMedium",
-    fontSize: 20,
-    textAlign: "center",
   },
 });

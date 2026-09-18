@@ -1,6 +1,27 @@
-# Welcome to your Expo app 👋
+# Cupid's Lab 💘
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Cupid's Lab is a playful, Valentine-themed React Native app built with [Expo](https://expo.dev) and [Expo Router](https://docs.expo.dev/router/introduction/). It bundles a handful of lighthearted "love experiments" into one app — name compatibility checks, pickup lines, date night ideas, and a printable Love Agreement.
+
+## Features
+
+- **FLAMES Match** — the classic FLAMES (Friends, Love, Affection, Marriage, Enemy, Siblings) name-matching game, animated letter-by-letter elimination and all.
+- **Love Percentage** — a name-based "love calculator" that produces a compatibility percentage, with a progress bar and a result animation that changes based on the score.
+- **Pickup Lines** — fetches a random pickup line from a public API, with copy-to-clipboard and the ability to save favorites (view them later on the Favourites screen).
+- **Date Ideas** — pick a date and a mood (romantic, chaotic, funny) and get a random date idea pulled from a Supabase table.
+- **Love Agreement** — fill in two names and a date to generate a fun "Love Agreement" contract, previewed in-app and exported/shared as a PDF.
+- **LoveGiggles** — fetches a random two-part joke and can read it aloud with text-to-speech.
+- **Feedback** — an in-app feedback modal (star rating + comments) that stores submissions in Supabase and forwards a notification to a Telegram chat.
+
+A few extra experiments (Age Prediction, Coin Toss, Truth or Dare, Star Sign Match) also live under `app/(tabs)/` as additional screens.
+
+## Tech stack
+
+- [Expo](https://expo.dev) + [Expo Router](https://docs.expo.dev/router/introduction/) (file-based routing) for the app shell and navigation
+- React Native with TypeScript
+- [Supabase](https://supabase.com) for the date-ideas dataset and feedback storage
+- `expo-print` + `expo-sharing` to generate and share the Love Agreement PDF
+- `lottie-react-native` for result animations
+- Public APIs for pickup lines ([rizzapi](https://rizzapi.vercel.app)) and jokes ([JokeAPI](https://v2.jokeapi.dev))
 
 ## Get started
 
@@ -9,43 +30,36 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    ```bash
    npm install
    ```
-2.Create a .env file
-Copy the .env.example file (if available) or create a new .env file in the root directory and replace the placeholder values with your own configuration.
+
+2. Configure environment variables
+
+   Create a `.env` file in the project root (see the variables below). This file is git-ignored and should never be committed.
+
+   ```
+   EXPO_PUBLIC_TELEGRAM_BOT_TOKEN="your-telegram-bot-token"
+   EXPO_PUBLIC_TELEGRAM_CHAT_ID="your-telegram-chat-id"
+
+   EXPO_PUBLIC_SUPA_BASE_URL="your-supabase-project-url"
+   EXPO_PUBLIC_SUPA_BASE_PUBLIC_ANNON_KEY="your-supabase-anon-key"
+   ```
+
+   - The Supabase values are required for the Date Ideas and Feedback features to work; the app expects a `date_ideas` table (with `mood` and `idea` columns) and a `feedback` table (with a `feedback_text` column).
+   - The Telegram values are optional — they're used to forward a notification whenever feedback is submitted.
+
 3. Start the app
 
    ```bash
-    npx expo start
+   npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+   From the Expo CLI output you can open the app in a [development build](https://docs.expo.dev/develop/development-builds/introduction/), an Android emulator, an iOS simulator, or [Expo Go](https://expo.dev/go).
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Project structure
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+This project uses Expo Router's file-based routing. The main screens live under `app/(tabs)/`, with `index.tsx` as the home screen and each feature as its own screen/tab (`ResultScreen.tsx`, `Percentage.tsx`, `PickupLineScreen.tsx`, `DateGenerator.tsx`, `LoveAgreementScreen.tsx`, `SmileGiver.tsx`, etc.). Shared UI primitives live under `components/`, and `supabaseClient.ts` sets up the Supabase client used across the app.
 
 ## Learn more
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- [Expo documentation](https://docs.expo.dev/)
+- [Expo Router documentation](https://docs.expo.dev/router/introduction/)
+- [Supabase documentation](https://supabase.com/docs)

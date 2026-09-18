@@ -1,29 +1,25 @@
 import { Tabs } from "expo-router";
 import React from "react";
-import { Platform } from "react-native";
-import { HapticTab } from "@/components/HapticTab";
 import { IconSymbol } from "@/components/ui/IconSymbol";
-import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
+// Note: every screen below sets tabBarStyle: { display: "none" } — this app
+// never shows the native tab bar. Navigation between screens happens via
+// buttons on the Home screen (see app/(tabs)/index.tsx) and back navigation,
+// with expo-router's (tabs) group used only for file-based routing. Because
+// the tab bar itself is never rendered, there's no need for a custom
+// tabBarButton/tabBarBackground here (those relied on
+// @react-navigation/elements and @react-navigation/bottom-tabs APIs that are
+// no longer usable directly alongside expo-router as of SDK 56+).
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+        tabBarActiveTintColor: Colors[colorScheme === "dark" ? "dark" : "light"].tint,
         headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: "absolute",
-          },
-          default: {},
-        }),
       }}
     >
       <Tabs.Screen
@@ -39,7 +35,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="ResultScreen"
         options={{
-          title: "Result",
+          title: "FLAMES Match",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="paperplane.fill" color={color} />
           ),
@@ -49,7 +45,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="Percentage"
         options={{
-          title: "Result",
+          title: "Love Percentage",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="paperplane.fill" color={color} />
           ),
@@ -59,7 +55,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="PickupLineScreen"
         options={{
-          title: "Result",
+          title: "Pickup Lines",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="paperplane.fill" color={color} />
           ),
@@ -69,7 +65,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="AgePredictionScreen"
         options={{
-          title: "Result",
+          title: "Age Prediction",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="paperplane.fill" color={color} />
           ),
@@ -79,7 +75,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="CoinTossScreen"
         options={{
-          title: "Result",
+          title: "Coin Toss",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="paperplane.fill" color={color} />
           ),
@@ -89,7 +85,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="TruthOrDare"
         options={{
-          title: "Result",
+          title: "Truth or Dare",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="paperplane.fill" color={color} />
           ),
@@ -99,7 +95,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="LoveAgreementScreen"
         options={{
-          title: "Result",
+          title: "Love Agreement",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="paperplane.fill" color={color} />
           ),
@@ -109,7 +105,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="StarMatchScreen"
         options={{
-          title: "Result",
+          title: "Star Sign Match",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="paperplane.fill" color={color} />
           ),
@@ -119,7 +115,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="DateGenerator"
         options={{
-          title: "Result",
+          title: "Date Ideas",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="paperplane.fill" color={color} />
           ),
@@ -129,7 +125,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="SmileGiver"
         options={{
-          title: "Result",
+          title: "LoveGiggles",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="paperplane.fill" color={color} />
           ),

@@ -7,23 +7,32 @@ import {
   StyleSheet,
   Animated,
   Easing,
-  KeyboardAvoidingView,
-  Platform,
 } from "react-native";
 import LottieView from "lottie-react-native";
 
-// Import your Lottie files
-import loadingAnim from "../../assets/animation/loading.json";
+// Result animations, chosen by the calculated compatibility percentage
 import animation0to16 from "../../assets/animation/enemy.json";
-import animation17to33 from "../../assets/animation/siblings.json";
+import animation17to33 from "../../assets/animation/warning.json";
 import animation34to50 from "../../assets/animation/siblings.json";
 import animation51to66 from "../../assets/animation/friends.json";
 import animation67to83 from "../../assets/animation/love.json";
-import animation84to100 from "../../assets/animation/love.json";
+import animation84to100 from "../../assets/animation/marriage.json";
 import { useRouter } from "expo-router";
-import { AntDesign } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
+import { RFValue } from "react-native-responsive-fontsize";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
+import AppHeader from "@/components/AppHeader";
+import IconPill from "@/components/IconPill";
+
+const getResultAnimation = (percent: number) => {
+  if (percent <= 16) return animation0to16;
+  if (percent <= 33) return animation17to33;
+  if (percent <= 50) return animation34to50;
+  if (percent <= 66) return animation51to66;
+  if (percent <= 83) return animation67to83;
+  return animation84to100;
+};
 
 const LoveCheckerScreen = () => {
   const router = useRouter();
@@ -162,63 +171,53 @@ const LoveCheckerScreen = () => {
       end={{ x: 0, y: 1 }}
       style={styles.container}
     >
-      <TouchableOpacity style={styles.backButton} onPress={handleback}>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <AntDesign name="arrowleft" size={24} color="white" />
-          <Text style={styles.backButtonText}>Love Calc</Text>
-        </View>
-      </TouchableOpacity>
-      <Image
-        style={styles.bottomImage}
-        source={require("../../assets/images/Calc.svg")}
-      />
+      <AppHeader title="Love Calc" onBack={handleback} />
+      <Image style={styles.bottomImage} source={require("../../assets/images/Calc.svg")} />
       {percentage ? (
         <View style={{ justifyContent: "center", alignItems: "center" }}>
           <View style={styles.namesWrapper}>
             <Text style={styles.namesText}>{name1}</Text>
 
-            <Image
-              source={require("../../assets/icons/ic_heart.svg")} // your custom SVG
-              style={styles.loveIcon}
-            />
+            <Ionicons name="heart" size={28} color="#FF6B81" />
 
             <Text style={styles.namesText}>{name2}</Text>
           </View>
 
           <View style={styles.progressContainer}>
-            <Image
-              style={styles.icon}
-              source={require("../../assets/icons/ic_input.svg")}
-            />
-
-            <View style={styles.progressBarBackground}>
-              {loading ? (
-                <Animated.View
-                  style={[
-                    styles.progressBarFill,
-                    {
-                      width: loadingAnim.interpolate({
-                        inputRange: [0, 100],
-                        outputRange: ["0%", "100%"],
-                      }),
-                    },
-                  ]}
-                />
-              ) : (
-                <View
-                  style={[styles.progressBarFill, { width: `${percentage}%` }]}
-                />
-              )}
-            </View>
+            <IconPill icon="person-outline">
+              <View style={styles.progressBarTrack}>
+                {loading ? (
+                  <Animated.View
+                    style={[
+                      styles.progressBarFill,
+                      {
+                        width: loadingAnim.interpolate({
+                          inputRange: [0, 100],
+                          outputRange: ["0%", "100%"],
+                        }),
+                      },
+                    ]}
+                  />
+                ) : (
+                  <View
+                    style={[styles.progressBarFill, { width: `${percentage}%` }]}
+                  />
+                )}
+              </View>
+            </IconPill>
           </View>
           {!loading && (
-            <View style={styles.percentageBadgeWrapper}>
-              <Image
-                source={require("../../assets/icons/ic_per.svg")}
-                style={styles.percentageBadgeImage}
+            <>
+              <View style={styles.percentageBadgeWrapper}>
+                <Text style={styles.percentageInBadge}>{percentage}%</Text>
+              </View>
+              <LottieView
+                source={getResultAnimation(percentage)}
+                autoPlay
+                loop
+                style={styles.resultAnimation}
               />
-              <Text style={styles.percentageInBadge}>{percentage}%</Text>
-            </View>
+            </>
           )}
 
           <TouchableOpacity onPress={handleReset}>
@@ -235,12 +234,7 @@ const LoveCheckerScreen = () => {
       ) : (
         <View style={{ width: "100%", alignItems: "center" }}>
           <View style={styles.progressInputContainer}>
-            <Image
-              style={styles.icon}
-              source={require("../../assets/icons/ic_input.svg")}
-            />
-
-            <View style={styles.progressBarInputBackground}>
+            <IconPill icon="person-outline">
               <TextInput
                 style={styles.progressInput}
                 placeholder="your name"
@@ -251,20 +245,15 @@ const LoveCheckerScreen = () => {
                   if (name1Error) setName1Error(""); // clear error while typing
                 }}
               />
-            </View>
+            </IconPill>
           </View>
 
           {name1Error ? (
             <Text style={styles.errorText}>{name1Error}</Text>
           ) : null}
-          
-          <View style={styles.progressInputContainer}>
-            <Image
-              style={styles.icon}
-              source={require("../../assets/icons/ic_input.svg")}
-            />
 
-            <View style={styles.progressBarInputBackground}>
+          <View style={styles.progressInputContainer}>
+            <IconPill icon="person-outline">
               <TextInput
                 style={styles.progressInput}
                 placeholder="your Crush name"
@@ -272,10 +261,10 @@ const LoveCheckerScreen = () => {
                 value={name2}
                 onChangeText={(text) => {
                   setName2(text);
-                  if (name1Error) setName2Error(""); // clear error while typing
+                  if (name2Error) setName2Error(""); // clear error while typing
                 }}
               />
-            </View>
+            </IconPill>
           </View>
           {name2Error ? (
             <Text style={styles.errorText}>{name2Error}</Text>
@@ -299,30 +288,23 @@ const LoveCheckerScreen = () => {
 export default LoveCheckerScreen;
 
 const styles = StyleSheet.create({
+  bottomImage: {
+    width: 250,
+    height: 200,
+    alignSelf: "center",
+    marginTop: 20,
+  },
   progressInput: {
     width: "100%",
     height: "100%",
     color: "#000",
-    paddingLeft: 30,
-    fontSize: 16,
+    fontSize: RFValue(16),
     fontWeight: "600",
   },
   progressInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
     marginVertical: 20,
     paddingHorizontal: 16,
     width: "100%",
-  },
-
-  progressBarInputBackground: {
-    flex: 1,
-    height: 45,
-    borderRadius: 20,
-    backgroundColor: "#fff",
-    justifyContent: "center",
-    borderWidth: 3,
-    borderColor: "#F16886",
   },
 
   namesWrapper: {
@@ -330,90 +312,62 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginVertical: 12,
-  },
-  bottomImage: {
-    width: 250,
-    height: 200,
-    alignSelf: "center",
-    marginTop: 20,
+    gap: 6,
   },
 
   namesText: {
-    fontSize: 20,
+    fontSize: RFValue(20),
     fontWeight: "600",
     color: "white",
     marginHorizontal: 6,
   },
 
-  loveIcon: {
-    width: 32,
-    height: 32,
-    resizeMode: "contain",
-  },
-
   percentageBadgeWrapper: {
-    position: "relative",
     width: 100,
     height: 100,
+    borderRadius: 50,
+    borderWidth: 6,
+    borderColor: "#fff",
+    backgroundColor: "rgba(255, 255, 255, 0.18)",
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 10,
   },
 
-  percentageBadgeImage: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "contain",
+  resultAnimation: {
+    width: 150,
+    height: 150,
   },
 
   percentageInBadge: {
-    position: "absolute",
-    fontSize: 22,
+    fontSize: RFValue(22),
     fontWeight: "bold",
     color: "#fff",
   },
 
-  icon: {
-    width: 50,
-    height: 50,
-    resizeMode: "contain",
-    marginRight: -30, // space between icon and bar
-    zIndex: 2,
-  },
   percentageText: {
-    fontSize: 20,
+    fontSize: RFValue(20),
     fontWeight: "bold",
     color: "#fff",
     marginTop: 10,
   },
 
   progressContainer: {
-    flexDirection: "row",
-    alignItems: "center",
     width: "80%",
     marginVertical: 20,
   },
-  progressBarWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 20,
-    width: "80%",
-  },
-  progressBarBackground: {
-    width: "80%",
-    height: 40,
-    backgroundColor: "#fff",
-    borderRadius: 30,
+  progressBarTrack: {
+    width: "100%",
+    height: 20,
+    backgroundColor: "#F3E1E6",
+    borderRadius: 10,
     overflow: "hidden",
-    marginVertical: 20,
-    borderWidth: 3,
-    borderColor: "#F16886",
   },
 
   progressBarFill: {
     height: "100%",
     backgroundColor: "#17BB84", // you can change this to any color you like
-    borderRadius: 30,
+    borderRadius: 10,
   },
   askButton: {
     width: 248,
@@ -427,7 +381,7 @@ const styles = StyleSheet.create({
   ButtonText: {
     color: "#fff",
     fontFamily:'k2dMedium',
-    fontSize: 18,
+    fontSize: RFValue(18),
     fontWeight: "bold",
   },
   container: {
@@ -440,25 +394,12 @@ const styles = StyleSheet.create({
   errorText: {
     color: "red",
     fontFamily: "k2dLight",
-    fontSize: 12,
+    fontSize: RFValue(12),
     lineHeight:12,
-  }, 
+  },
   percentage: {
-    fontSize: 64,
+    fontSize: RFValue(64),
     fontWeight: "bold",
     color: "#7E8EFF",
-  },
-
-  backButton: {
-    position: "absolute",
-    top: 30,
-    left: 20,
-  },
-  backButtonText: {
-    marginLeft: 10,
-    color: "#fff",
-    fontFamily: "k2dMedium",
-    fontSize: 20,
-    textAlign: "center",
   },
 });

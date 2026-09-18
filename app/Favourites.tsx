@@ -8,9 +8,13 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Clipboard from "expo-clipboard";
-import { Feather } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
+import { RFValue } from "react-native-responsive-fontsize";
+import { useRouter } from "expo-router";
+import AppHeader from "@/components/AppHeader";
 
 const FavouritesScreen = () => {
+  const router = useRouter();
   const [favorites, setFavorites] = useState<string[]>([]);
   const [copiedItem, setCopiedItem] = useState<string | null>(null);
 
@@ -20,7 +24,7 @@ const FavouritesScreen = () => {
       const parsed = stored ? JSON.parse(stored) : [];
       setFavorites(parsed);
     } catch (error) {
-      console.error("Failed to load favorites:", error);
+      // Ignore malformed/missing favorites in storage
     }
   };
 
@@ -55,9 +59,10 @@ const FavouritesScreen = () => {
             </>
           )}
           {copiedItem === item && (
-            <>
-              <Text style={styles.copiedText}>✅ Copied</Text>
-            </>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+              <Ionicons name="checkmark-circle" size={16} color="#0BFDA6" />
+              <Text style={styles.copiedText}>Copied</Text>
+            </View>
           )}
         </TouchableOpacity>
 
@@ -74,6 +79,7 @@ const FavouritesScreen = () => {
 
   return (
     <View style={styles.container}>
+      <AppHeader title="Favourites" onBack={() => router.back()} variant="solid" />
       {favorites.length === 0 ? (
         <Text style={styles.noData}>No favourites found.</Text>
       ) : (
@@ -93,12 +99,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    paddingTop: 100,
     backgroundColor: "#fff",
   },
   noData: {
     textAlign: "center",
     marginTop: 50,
-    fontSize: 16,
+    fontSize: RFValue(16),
     color: "#888",
   },
   favoriteItem: {
@@ -108,13 +115,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   text: {
-    fontSize: 16,
+    fontSize: RFValue(16),
     color: "#444",
     marginBottom: 10,
   },
   copiedText: {
     color: "#0BFDA6",
-    fontSize: 14,
+    fontSize: RFValue(14),
     fontWeight: "600",
   },
   buttons: {

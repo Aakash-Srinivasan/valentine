@@ -10,6 +10,9 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { RFValue } from "react-native-responsive-fontsize";
+import { LinearGradient } from "expo-linear-gradient";
+import AppHeader from "@/components/AppHeader";
 
 // Interface for compatibility result
 interface MatchResult {
@@ -103,10 +106,14 @@ export default function StarMatchScreen() {
     router.back();
   };
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={handleback}>
-        <Text style={styles.backButtonText}>🔙 Back</Text>
-      </TouchableOpacity>
+    <LinearGradient
+      colors={["#A18CD1", "#FBC2EB"]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.gradient}
+    >
+      <AppHeader title="Star Match" onBack={handleback} />
+      <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>🔮 Star Match</Text>
 
       <Text style={styles.label}>Your Birthdate</Text>
@@ -146,7 +153,7 @@ export default function StarMatchScreen() {
           value={date1}
           mode="date"
           display="default"
-          maximumDate={new Date()} 
+          maximumDate={new Date()}
           onChange={(event, selectedDate) => {
             setShowDatePicker1(Platform.OS === "ios" ? true : false);
             if (selectedDate && event.type !== "dismissed") {
@@ -160,7 +167,7 @@ export default function StarMatchScreen() {
           value={date2}
           mode="date"
           display="default"
-          maximumDate={new Date()} 
+          maximumDate={new Date()}
           onChange={(event, selectedDate) => {
             setShowDatePicker2(Platform.OS === "ios" ? true : false);
             if (selectedDate && event.type !== "dismissed") {
@@ -194,27 +201,34 @@ export default function StarMatchScreen() {
           <Text style={styles.resultMessage}>{result.message}</Text>
         </View>
       )}
-    </ScrollView>
+      </ScrollView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
+  gradient: {
+    flex: 1,
+  },
   container: {
     padding: 24,
+    paddingTop: 90,
     alignItems: "center",
-    backgroundColor: "#F9F9F9",
-    flex: 1,
+    flexGrow: 1,
     justifyContent: "center",
   },
   title: {
-    fontSize: 28,
+    fontSize: RFValue(28),
     fontWeight: "bold",
     marginBottom: 20,
+    color: "#fff",
   },
   label: {
-    fontSize: 18,
+    fontSize: RFValue(18),
     marginTop: 20,
     alignSelf: "flex-start",
+    color: "#fff",
+    fontWeight: "600",
   },
   input: {
     borderWidth: 1,
@@ -236,45 +250,49 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 30,
-    backgroundColor: "#7E8EFF",
+    backgroundColor: "#fff",
     padding: 12,
     paddingHorizontal: 24,
     borderRadius: 12,
   },
   buttonText: {
-    color: "white",
-    fontSize: 18,
+    color: "#A18CD1",
+    fontSize: RFValue(18),
+    fontWeight: "700",
   },
   placeholder: {
     marginTop: 20,
     fontStyle: "italic",
-    color: "#888",
+    color: "#fff",
     textAlign: "center",
   },
   resultContainer: {
     marginTop: 40,
     alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    paddingVertical: 20,
+    paddingHorizontal: 24,
+    width: "100%",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
   },
   resultSigns: {
-    fontSize: 20,
+    fontSize: RFValue(20),
+    color: "#333",
   },
   resultScore: {
-    fontSize: 40,
+    fontSize: RFValue(40),
     fontWeight: "bold",
+    color: "#A18CD1",
     marginVertical: 10,
   },
   resultMessage: {
-    fontSize: 16,
+    fontSize: RFValue(16),
     textAlign: "center",
-  },
-  backButton: {
-    position: "absolute",
-    top: 50,
-    left: 20,
-  },
-  backButtonText: {
-    color: "#444",
-    fontSize: 16,
-    textAlign: "center",
+    color: "#555",
   },
 });
